@@ -1,0 +1,51 @@
+// 天猫随意vue练手
+相关产品的URL： https://api.myjson.com/bins/1ch3zd        mybrands.json(包含brands)
+
+左侧菜单：https://api.myjson.com/bins/ncc81               left.json
+
+轮播图变得导航：https://api.myjson.com/bins/dp6jd         type.json
+
+嵌套路由：
+注意在子路由中的path中，不要加斜线，那样会定位在根目录下面。
+
+    const router = new VueRouter({
+        routes:[
+            {
+                path: 'parent',
+                component: Parent,
+                childern:[
+                    {
+                        path: 'xx1',
+                        component: Xx1
+                    },
+                    {
+                        path: 'xx2',
+                        component: Xx2
+                    }
+                ]
+            }
+        ]
+    })
+
+
+
+
+qq音乐播放源地址：
+    http://dl.stream.qqmusic.qq.com/C400002w0TLx4Fh22c.m4a?guid=8942197590&vkey=A71C09391AFDCEA1ACD2C49AA80F473C8E9D106A7CFD7A5CA6B7CA5EA4586DBE46D907B5E74F87CCDFA5530B914C6EEFC44EA026D2C9F1C2&uin=0&fromtag=999
+网易云音乐播放源：
+    http://m10.music.126.net/20180326153150/0c0188b80f1b7c16d2b343f2d8ef17d8/ymusic/bd9e/e6a6/b7d1/7d3b8235d9104334aca6696320f5d139.mp3
+
+
+需求 -> 上 github 
+bug -> 上 stackoverflow
+
+
+
+1：问题：
+描述： 排行榜页面详情页和歌手点进去的详情页样式一致，但检索的地址和参数几乎完全不用一样，想复用
+
+2018/3/29 16.56 暂无思路
+
+
+暂时解决办法：
+2018/3/30 8.35 新增一个新的组件，当做是排行榜的子路由跳转页面0000
