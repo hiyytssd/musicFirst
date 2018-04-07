@@ -1,6 +1,6 @@
 <template>
     <div class="singer-detail">
-        <p class="go-back" @click="goBack()">back</p>
+        <p class="go-back" @click="goBack()"><i class="iconfont icon-fanhui1"></i></p>
         <div class="loading" v-if="isLoading">正在加载中...</div>
         <div class="container" v-if="!isLoading">
             <div class="singer-top">
@@ -77,8 +77,10 @@ export default {
     position: fixed;
     right: 15px;
     top:10px;
-    font-size: 16px;
     color:#fff;
+    .iconfont{
+      font-size: 24px;
+    }
 }
   background: #fff;
   position: fixed;

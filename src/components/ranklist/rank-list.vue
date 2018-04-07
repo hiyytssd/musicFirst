@@ -1,6 +1,6 @@
 <template>
     <div class="singer-detail">
-        <p class="go-back" @click="goBack()">back</p>
+        <p class="go-back" @click="goBack()"><i class="iconfont icon-fanhui1"></i></p>
         <div class="loading" v-if="isLoading">正在加载中...</div>
         <div class="container" v-if="!isLoading">
             <div class="singer-top">
@@ -61,7 +61,8 @@ export default {
         if (res.code === ERR_OK) {
           console.log(res);
           this.songlist = res;
-            this.avator = `https://y.gtimg.cn/music/photo_new/T002R300x300M000${res.songlist[0].data.albummid}.jpg?max_age=2592000`;
+          this.avator = `https://y.gtimg.cn/music/photo_new/T002R300x300M000${res
+            .songlist[0].data.albummid}.jpg?max_age=2592000`;
           this.isLoading = false;
         }
       });
@@ -76,8 +77,10 @@ export default {
     position: fixed;
     right: 15px;
     top: 10px;
-    font-size: 16px;
     color: #fff;
+    .iconfont {
+      font-size: 24px;
+    }
   }
   background: #fff;
   position: fixed;

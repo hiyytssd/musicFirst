@@ -28,14 +28,9 @@ export default {
   },
   methods: {
       custormAnchor(anchor) {
-          console.log(anchor)
-          document.getElementById(anchor).scrollIntoView() -80;
+          document.getElementById(anchor).scrollIntoView();
       },
       openSongList(sing){
-        // console.log(sing.id)
-        //  this.$router.push({
-        //   path: `/singer/${sing.id}`
-        // })
         this.$emit('selectSongList',sing);
       }
   }

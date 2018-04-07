@@ -1,5 +1,8 @@
 <template>
     <div class="singer">
+      <div class="loading-wrapper" v-show="loading">
+        <loading></loading>
+      </div>
         <list-view :singList="singerList" @selectSongList="openSongList"></list-view>
         <div class="songplay-wrapper">
           <!-- <song-play></song-play> -->
@@ -14,12 +17,14 @@ import { getSinger } from "api/singer.js";
 
 import { ERR_OK } from "api/config";
 import ListView from "@/base/listview/listview";
+import loading from '@/base/loading/loading'
 // import SongPlay from '@/components/songplay/songplay'
 const HOST_LENGTH = 10;
 const HOT_TITLE = "热门";
 export default {
   data() {
     return {
+      loading:false,
       singerList: []
     };
   },
@@ -39,7 +44,7 @@ export default {
           //   this.singerList = res.data.list;
           console.log(res.data.list)
           this.singerList = this._normalizeList(res.data.list);
-          // console.log(this.singerList);
+          this.loading = false
         }
         // console.log(res.data.list);
       });
@@ -102,7 +107,8 @@ export default {
     }
   },
   components: {
-    ListView
+    ListView,
+    loading
     // SongPlay
   }
 };

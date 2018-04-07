@@ -6,6 +6,8 @@ import router from './router'
 // 在入口文件中引入(暂时不支持单组件引入的方式):
 import wcSwiper from 'wc-swiper'
 import 'wc-swiper/style.css'
+import '@/common/style/base.css'
+import '@/common/font/iconfont.css'
 Vue.use(wcSwiper);
 Vue.config.productionTip = false
 

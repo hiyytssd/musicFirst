@@ -8,6 +8,7 @@ import singer from '@/components/singer'
 import rank from '@/components/rank'
 import search from '@/components/search'
 import singerDetail from '@/components/singerdetail/singerdetail'
+import rankList from '@/components/ranklist/rank-list'
 Vue.use(Router)
 
 export default new Router({
@@ -31,7 +32,8 @@ export default new Router({
     }, {
       path: '/singer',
       component: singer,
-      children:[
+      // 子路由
+      children: [
         {
           // 通过动态ID跳转
           path: '/singer/:id',
@@ -40,7 +42,15 @@ export default new Router({
       ]
     }, {
       path: '/rank',
-      component: rank
+      component: rank,
+      // 子路由
+      children: [
+        {
+          //通过动态ID跳转
+          path: '/rank/:topid',
+          component: rankList
+        }
+      ]
     }, {
       path: '/search',
       component: search

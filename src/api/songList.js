@@ -16,4 +16,4 @@ export function getSongList(singerid) {
         _: 1522304854846
     })
     return jsonp(url, data, options)
-}
+} 
