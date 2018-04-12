@@ -1,72 +1,96 @@
 <template>
     <div class="singer-detail">
-        <p class="go-back" @click="goBack()">back</p>
-        <div class="loading" v-if="isLoading">正在加载中...</div>
-        <div class="container" v-if="!isLoading">
-            <div class="singer-top">
-                <img :src="avator" alt="" class="s-bg">
-                <div class="singer-box">
-                    <img class="avator" :src="avator" alt="">
-                    <div class="singer-info">
-                        <h3 class="sname">{{songlist.singer_name}}</h3>
-                        <p class="fensi">粉丝：{{songlist.fans}} 人</p>
-                        <p class="introduce">{{songlist.SingerDesc}}</p>
-                    </div>
-                </div>
-                <div class="btn-play">播放全部</div>
-            </div>
-            <div class="song-container">
-                <h6 class="title">歌曲&nbsp;共{{songlist.total}}首</h6>
-                <div class="song-list">
-                    <ul>
-                        <li class="song-item" v-for="item in songlist.list">
-                            <h3 class="song-name">{{item.musicData.albumname}}</h3>
-                            <p class="info">{{item.musicData.singer[0].name}} {{item.musicData.albumdesc}}</p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+        <div class="loading-wrapper">
+          <loading v-if="isLoading"></loading>
+        </div>
+        <song-list @select="selectItem" @playAll="playAll"  v-if="!isLoading"  :avator="avator" :title="title" :songs="songs" :total="total"></song-list>
         </div>
     </div>
 </template>
 
 <script>
 import { getSongList } from "api/songList";
+import loading from '@/base/loading/loading'
 import { ERR_OK } from "api/config";
+// 导入 vuex的辅助函数
+import {mapGetters} from 'vuex'
+import {createSong} from 'common/js/song.js'
+import SongList from '@/components/song-list/song-list'
+import {mapActions} from 'vuex'
 export default {
+  computed:{
+    ...mapGetters([
+      'singer'
+    ]),
+    title(){
+      return this.singer.name;
+    },
+    avator(){
+      return `https://y.gtimg.cn/music/photo_new/T001R150x150M000${this.singer.id}.jpg?max_age=2592000`;
+    },
+    total(){
+      return this.singer.total
+    }
+  },
   data() {
     return {
       isLoading: {
         type: Boolean,
         default: true
       },
-      songlist: {
-        type: Array
-      },
-      avator: {
-        type: String
-      }
+      songs: []
     };
   },
-  mounted() {
+  mounted(){
     this._getSongList();
   },
   methods: {
-      goBack(){
-          history.go(-1)
-      },
+    ...mapActions([
+      'selectPlay'
+    ]),
+    selectItem(item, index){
+      // 提交mutations
+      this.selectPlay({
+        list: this.songs,
+        index
+      })
+    },
+    playAll(songs){
+      this.selectPlay({
+        list: songs,
+        index: 0
+      })
+    },
     _getSongList() {
-      var sid = this.$route.params.id;
+      var sid = this.singer.id;
       getSongList(sid).then(res => {
+        if(!sid){
+          this.$router.push('/singer')
+          return
+        }
         if (res.code === ERR_OK) {
-        //   console.log( res.data)
-          this.songlist = res.data;
-          this.avator = `https://y.gtimg.cn/music/photo_new/T001R150x150M000${res
-            .data.singer_mid}.jpg?max_age=2592000`;
+          this.songs = this._normalSong(res.data.list)
+          console.log(this.songs);
+          // this.avator = `https://y.gtimg.cn/music/photo_new/T001R150x150M000${res
+          //   .data.singer_mid}.jpg?max_age=2592000`;
           this.isLoading = false;
         }
       });
+    },
+    _normalSong(list){
+      let ret = []
+      list.forEach( (item) => {
+        let musicData = item.musicData;
+        if(musicData.songid && musicData.albummid){
+          ret.push(createSong(musicData))
+        }
+      })
+      return ret;
     }
+  },
+  components:{
+    loading,
+    SongList
   }
 };
 </script>
@@ -77,8 +101,10 @@ export default {
     position: fixed;
     right: 15px;
     top:10px;
-    font-size: 16px;
     color:#fff;
+    .iconfont{
+      font-size: 24px;
+    }
 }
   background: #fff;
   position: fixed;

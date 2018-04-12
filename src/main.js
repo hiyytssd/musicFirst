@@ -6,9 +6,12 @@ import router from './router'
 // 在入口文件中引入(暂时不支持单组件引入的方式):
 import wcSwiper from 'wc-swiper'
 import 'wc-swiper/style.css'
+import '@/common/style/base.css'
+import '@/common/font/iconfont.css'
 Vue.use(wcSwiper);
 Vue.config.productionTip = false
 
+import store from './store'
 
 // import LazyLoad from 'vue-lazyload-img'
 // var Lazyload = require("vue-lazyload-img")
@@ -17,6 +20,7 @@ Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   components: { App },
   template: '<App/>'

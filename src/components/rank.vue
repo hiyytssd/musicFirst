@@ -1,22 +1,24 @@
 <template>
     <div class="rank">
-        <div class="loading" v-if="loading">加载中...</div>
+        <loading class="loading-wrapper" v-show="loading"></loading>
         <div class="rank-box" v-for="item in rankList">
             <div class="song-img">
                 <img :src="item.picUrl" alt=""></div>
             <div class="song-list">
                 <h3 class="song-title">{{item.topTitle}}</h3>
                 <ul>
-                    <li class="song-info" v-for="(song, index) in item.songList">{{++index}}<span class="text">{{song.songname}}</span>-{{song.singername}}</li> 
+                    <li class="song-info" v-for="(song, index) in item.songList" @click="openSongList(item.id)">{{++index}}<span class="text">{{song.songname}}</span>-{{song.singername}}</li> 
                 </ul>
             </div>
         </div>
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
 import { getRank } from "api/rank";
 import { ERR_OK } from "api/config";
+import loading from '@/base/loading/loading'
 export default {
   data() {
     return {
@@ -31,26 +33,31 @@ export default {
     _getRank() {
       getRank().then(res => {
         if (res.code === ERR_OK) {
-          this.loading = false;
-          this.rankList = res.data.topList;
+            this.loading = false;
+            this.rankList = res.data.topList;
+            console.log(this.rankList);
+          
         }
       });
+    },
+    openSongList(id) {
+      console.log(id)
+      this.$router.push({
+        path: `/rank/${id}`
+      });
     }
+  },
+  components:{
+    loading
   }
 };
 </script>
 
 <style scoped lang="less">
 .rank {
-  padding-top:80px;
+  padding-top: 80px;
   margin: 11px;
   color: #000;
-  .loading {
-    margin-top: 100px;
-    color: #555;
-    font-size: 16px;
-    text-align: center;
-  }
   .rank-box {
     background-color: #fff;
     margin-top: 11px;
