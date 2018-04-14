@@ -3,6 +3,8 @@
         <div class="loading-wrapper">
           <loading v-if="isLoading"></loading>
         </div>
+        <!-- 返回 -->
+        <p class="go-back" @click="goBack"><i class="iconfont icon-fanhui1"></i></p>
         <song-list @select="selectItem" @playAll="playAll"  v-if="!isLoading"  :avator="avator" :title="title" :songs="songs" :total="total"></song-list>
         </div>
     </div>
@@ -45,8 +47,12 @@ export default {
     this._getSongList();
   },
   methods: {
+    goBack(){
+      this.$router.push('/singer')
+    },
     ...mapActions([
-      'selectPlay'
+      'selectPlay',
+      'reandomPlay'
     ]),
     selectItem(item, index){
       // 提交mutations
@@ -56,9 +62,8 @@ export default {
       })
     },
     playAll(songs){
-      this.selectPlay({
-        list: songs,
-        index: 0
+      this.reandomPlay({
+        list: this.songs
       })
     },
     _getSongList() {

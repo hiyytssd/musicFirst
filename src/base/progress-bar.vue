@@ -67,7 +67,7 @@ export default {
         this.$refs.progress.style.width.length - 2
       );
       const percent = left
-      console.log(percent)
+      // console.log(percent)
       this.$emit("percentChange", percent);
     }
   },

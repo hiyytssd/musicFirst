@@ -3,22 +3,24 @@
       <div class="loading-wrapper" v-show="loading">
         <loading></loading>
       </div>
-        <list-view :singList="singerList" @selectSongList="openSongList"></list-view>
-        <div class="songplay-wrapper">
-          <!-- <song-play></song-play> -->
-        </div>
+      <div class="scroll-wrapper">
+        <!-- <b-scroll> -->
+          <list-view :singList="singerList" @selectSongList="openSongList"></list-view>
+          <div class="songplay-wrapper">
+            <!-- <song-play></song-play> -->
+          </div>
+        <!-- </b-scroll> -->
+      </div>
         <router-view></router-view>
     </div>
 </template>
 
 <script>
-import { getSinger } from "api/singer.js";
-
-
-import { ERR_OK } from "api/config";
-import ListView from "@/base/listview/listview";
+import { getSinger } from "api/singer.js"
+import { ERR_OK } from "api/config"
+import ListView from "@/base/listview/listview"
 import loading from '@/base/loading/loading'
-
+import BScroll from '@/base/bs-scroll/scroll'
 import {mapMutations} from 'vuex'
 
 // import SongPlay from '@/components/songplay/songplay'
@@ -116,7 +118,8 @@ export default {
   },
   components: {
     ListView,
-    loading
+    loading,
+    BScroll
     // SongPlay
   }
 };

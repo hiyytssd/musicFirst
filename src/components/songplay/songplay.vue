@@ -19,7 +19,7 @@
             <!-- 播放的旋转的图片 -->
             <div class="song-img">
                 <div :class="playCls">
-                    <img :src="currentSong.image" width="230" height="230" alt="" class="">
+                    <img :src="currentSong.image" width="260" height="260" alt="" class="">
                 </div>
             </div>
             <!-- 歌词 -->
@@ -45,7 +45,9 @@
               <span class="time time-r">{{formatTime(currentSong.duration)}}</span>
             </div>
             <ul>
-                <!-- <li>顺序</li> -->
+                <li class="icon i-left">
+                  <i @click="changeMode" class="iconfont" :class="iconMode"></i>
+                </li>
                 <li class="pre-song">
                     <i @click="prev" class="iconfont icon-047caozuo_shangyishou"></i>
                 </li>
@@ -54,6 +56,9 @@
                 </li>
                 <li class="next-song">
                     <i @click="next" class="iconfont icon-49xiayishou"></i>
+                </li>
+                <li class="icon">
+                  喜欢
                 </li>
             </ul>
         </div>
@@ -85,7 +90,7 @@
           </div>
       </div>
     </transition>
-    <audio ref="audio" id="audio" :src="currentSong.url" @timeupdate="updateTime"></audio>
+    <audio ref="audio" id="audio" :src="currentSong.url" @timeupdate="updateTime" @ended="end"></audio>
 </div>
     
 </template>
@@ -93,15 +98,16 @@
 <script>
 import img from "@/assets/logo.png";
 import { mapGetters, mapMutations } from "vuex";
-
+import { playMode } from "common/js/config";
 import ProgressBar from "@/base/progress-bar";
+import { shuffle } from "common/js/util.js";
 export default {
   data() {
     return {
       img: img,
       currentTime: 0,
       allTime: 0,
-      wid:0
+      wid: 0
     };
   },
   computed: {
@@ -111,13 +117,22 @@ export default {
       "currentSong",
       "isplaying",
       "currentIndex",
-      "duration"
+      "duration",
+      "mode",
+      "sequenceList"
     ]),
     playCls() {
       return this.isplaying ? "img-box-active" : "img-box-active img-box-pause";
     },
-    percent(){
-      return this.currentTime / this.currentSong.duration
+    percent() {
+      return this.currentTime / this.currentSong.duration;
+    },
+    iconMode() {
+      return this.mode === playMode.sequence
+        ? "icon-xunhuanbofang"
+        : this.mode === playMode.loop
+          ? "icon-danquxunhuan"
+          : "icon-suijibofang";
     }
   },
   methods: {
@@ -146,31 +161,66 @@ export default {
       }
       this.SETCURRENTINDEX(index);
       if (!this.isplaying) {
-        this.togglePlaying();
+        this.togglePlaying()
       }
+    },
+    loop(){
+      this.$refs.audio.currentTime = 0
+      this.$refs.audio.play()
+    },
+    end(){
+      if(this.mode === playMode.loop){
+        console.log('单曲循环')
+        this.loop()
+      }else{
+        console.log('下一首')
+        this.next()
+      }
+    },
+    changeMode() {
+      const modes = (this.mode + 1) % 3
+      //通过mapmutation 修改mode
+      this.SETPLAYMODE(modes)
+      let list = null
+      if (modes == playMode.rander) {
+        //是否是随机播放
+        list = shuffle(this.playList)
+      }else{
+        list = this.playList
+      }
+      this.PLAYLIST(list)
+      this.resetCurrentIndex(list)
+    },
+    resetCurrentIndex(list){//当列表改变以后，当前歌曲不变
+    let index = list.findIndex( (item) => {
+      return item.id == this.currentSong.id
+    })
+    this.SETCURRENTINDEX(index)
     },
     ...mapMutations({
       SETFULLSCREEN: "SET_FULL_SCREEN",
       SETPLAYINGSTATE: "SET_PLAYING_STATE",
-      SETCURRENTINDEX: "SET_CURRENT_INDEX"
+      SETCURRENTINDEX: "SET_CURRENT_INDEX",
+      SETPLAYMODE: "SET_MODE",
+      PLAYLIST:'SET_PLAYLIST'
     }),
-    updateTime(e) {//获取播放时间
-      this.currentTime = e.target.currentTime;
-      this.wid = e.target.currentTime / this.currentSong.duration;
-      
+    updateTime(e) {
+      //获取播放时间
+      this.currentTime = e.target.currentTime
+      this.wid = e.target.currentTime / this.currentSong.duration
     },
     // 时间格式化
     formatTime(interval) {
       // | 0 向下取整
-      interval = interval | 0;
-      var minute = (interval / 60) | 0;
-      var second = interval % 60;
-      second = second.toString().length > 1 ? second : "0" + second;
-      minute = minute.toString().length > 1 ? minute : "0" + minute;
-      return `${minute}:${second}`;
+      interval = interval | 0
+      var minute = (interval / 60) | 0
+      var second = interval % 60
+      second = second.toString().length > 1 ? second : "0" + second
+      minute = minute.toString().length > 1 ? minute : "0" + minute
+      return `${minute}:${second}`
     },
     // 进度条改变
-    percentChange(percent){
+    percentChange(percent) {
       this.$refs.audio.currentTime = this.currentSong.duration * percent
       this.$refs.audio.play()
     }
@@ -178,18 +228,18 @@ export default {
   watch: {
     currentSong() {
       this.$nextTick(() => {
-        this.$refs.audio.play();
-      });
+        this.$refs.audio.play()
+      })
     },
     isplaying(newPlaying) {
-      const audio = this.$refs.audio;
-      newPlaying ? audio.play() : audio.pause();
+      const audio = this.$refs.audio
+      newPlaying ? audio.play() : audio.pause()
     }
   },
   components: {
     ProgressBar
   }
-};
+}
 </script>
 
 <style scoped lang="less">
@@ -203,15 +253,15 @@ export default {
   background-color: #000;
 }
 
-    .mask {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      background-color: #000;
-      opacity: 0.7;
-    }
+.mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: #000;
+  opacity: 0.7;
+}
 .cd {
   .normal-enter-active,
   .normal-leave-active {
@@ -274,8 +324,8 @@ export default {
     z-index: 20;
   }
   .song-img {
-    width: 230px;
-    height: 230px;
+    width: 260px;
+    height: 260px;
     border-radius: 50%;
     background: #555;
     position: absolute;
@@ -302,7 +352,7 @@ export default {
     text-align: center;
     li {
       float: left;
-      width: 33%;
+      width: 20%;
     }
     .play-pause .iconfont {
       font-size: 30px;

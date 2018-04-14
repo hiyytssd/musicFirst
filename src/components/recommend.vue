@@ -1,7 +1,9 @@
 <template>
     <div class="recommend">
         <div class="slider-wrapper">
-            <slider :sliderImg="sliderImg"></slider>
+            <slider :loop="loop" :autoPlay='autoPlay'>
+              <div class="slider-item" v-for="item in sliderImg"><img :src="item.picUrl" width="100%" height="100%" alt=""></div>
+            </slider>
         </div>
         <div class="radio-wrapper">
             <h2 class="title">电台</h2>
@@ -30,7 +32,9 @@ export default {
   data() {
     return {
       sliderImg: [],
-      radioList: []
+      radioList: [],
+      loop:true,
+      autoPlay: true
     };
   },
   created() {
@@ -41,6 +45,7 @@ export default {
       getRecommend().then(res => {
         if (res.code === ERR_OK) {
           this.sliderImg = res.data.slider;
+          console.log(this.sliderImg)
           this.radioList = res.data.radioList;
         }
       });

@@ -1,6 +1,5 @@
 <template>
     <div class="song-list">
-        <p class="go-back" @click="goBack()"><i class="iconfont icon-fanhui1"></i></p>
         <div class="container">
             <div class="singer-top">
                 <img :src="avator" alt="" class="s-bg">
@@ -16,13 +15,17 @@
             </div>
             <div class="song-container">
                 <h6 class="title">歌曲&nbsp;共{{total}}首</h6>
-                <div class="song-list">
-                    <ul>
-                        <li class="song-item" v-for="(item, index) in songs" @click="selectItem(item, index)">
-                            <h3 class="song-name">{{item.name}}</h3>
-                            <p class="info">{{item.name}} {{item.albumdesc}}</p>
-                        </li>
-                    </ul>
+                <div class="scroll-wrapper">
+                  <b-scroll>
+                    <!-- <div class="song-list"> -->
+                        <ul>
+                            <li class="song-item" v-for="(item, index) in songs" @click="selectItem(item, index)">
+                                <h3 class="song-name">{{item.name}}</h3>
+                                <p class="info">{{item.name}} {{item.albumdesc}}</p>
+                            </li>
+                        </ul>
+                    <!-- </div> -->
+                    </b-scroll>
                 </div>
             </div>
         </div>
@@ -30,6 +33,7 @@
 </template>
 
 <script>
+  import BScroll from '@/base/bs-scroll/scroll'
 export default {
   props: {
     avator: {
@@ -46,15 +50,15 @@ export default {
     }
   },
   methods: {
-    goBack() {
-      history.go(-1);
-    },
     selectItem(item, index){
       this.$emit('select', item, index)
     },
     playAll(songs){
       this.$emit('playAll',songs)
     }
+  },
+  components:{
+      BScroll
   }
 };
 </script>
@@ -148,6 +152,9 @@ export default {
 }
 .song-container {
   margin: 17px;
+  .scroll-wrapper{
+    height:350px;
+  }
   .title {
     margin-bottom: 11px;
   }
